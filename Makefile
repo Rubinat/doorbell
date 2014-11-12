@@ -17,9 +17,21 @@ define Package/bell
 	TITLE:=Bell
 endef
 
+define Package/bell/description
+	This is a networked doorbell system
+endef
+
+define Package/bell/config
+	#source "$(SOURCE)/Config.in"
+endef
+
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
 	# $(CP) ./src/* $(PKG_BUILD_DIR)/
+endef
+
+define Build/Configure
+#	no configuration necessary
 endef
 
 define Build/Compile directives
@@ -39,8 +51,8 @@ define Package/bell/install
 	# $(INSTALL_BIN) $(PKG_BUILD_DIR)/etc/rc.button/reset $(1)/etc/rc.button/
 endef
 
-# define Package/webcamstreamer/postinst
+define Package/bell/postinst
 # 	$${IPKG_INSTROOT}/usr/bin/bell install
-# endef
+endef
 
 $(eval $(call BuildPackage,bell))
