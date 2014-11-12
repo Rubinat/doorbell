@@ -1,0 +1,6 @@
+#!/bin/sh
+[ "${ACTION}" = "released" ] || exit 0
+if [ "$SEEN" -gt 2 ] ; then
+  bell reset
+fi
+bell learn

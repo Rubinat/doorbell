@@ -1,0 +1,7 @@
+#!/bin/sh /etc/rc.common
+START=99
+start() {
+  bell off
+  sleep 10
+  bell listen > /tmp/bell.log &
+}
