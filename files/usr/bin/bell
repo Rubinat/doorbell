@@ -1,0 +1,179 @@
+#!/bin/sh
+
+usage() {
+  echo "Usage: $0 { on | off | reset | id | listen | log | kill | learn }"
+}
+
+on() {
+  echo 1 >/sys/class/gpio/gpio8/value
+}
+
+off() {
+  echo 0 >/sys/class/gpio/gpio8/value
+}
+
+log() {
+  cat /tmp/bell.log
+}
+
+beep() {
+  on
+  sleep 1
+  off
+}
+
+id() {
+  cat /root/id
+}
+
+reset() {
+  echo reset id
+  rm /root/id
+  beep
+}
+
+learn() {
+  echo learn id
+  touch /root/learn
+  killall -9 nc
+  beep
+}
+
+kill() {
+  echo kill
+  killall -9 nc
+  killall -9 bell
+}
+
+# install_boot() {
+#   echo installing /etc/init.d/bell
+#   cat <<EOF > /etc/init.d/bell
+# #!/bin/sh /etc/rc.common
+# START=99
+# start() {
+#   bell off
+#   sleep 10
+#   bell listen > /tmp/bell.log &
+# }
+# EOF
+#   chmod +x /etc/init.d/bell
+#   /etc/init.d/bell enable
+# }
+
+# install_button() {
+#   echo installing /etc/rc.button/reset
+#   cat <<EOF > /etc/rc.button/reset
+# #!/bin/sh
+# [ "\${ACTION}" = "released" ] || exit 0
+# if [ "\$SEEN" -gt 2 ] ; then
+#   bell reset
+# fi
+# bell learn
+# EOF
+# }
+
+# install_network() {
+#   echo installing /etc/config/network
+#   cat <<EOF > /etc/config/network
+# config interface 'loopback'
+#   option ifname 'lo'
+#   option proto 'static'
+#   option ipaddr '127.0.0.1'
+#   option netmask '255.0.0.0'
+
+# config interface 'lan'
+#   option ifname 'eth0 eth1'
+#   option type 'bridge'
+#   option proto 'dhcp'
+# }
+# EOF
+# }
+
+# install_banner() {
+#   cat <<EOF > /etc/banner
+#  ___      ___ ___    ___ ___          
+# |\  \    /  /|\  \  /  /|\  \         
+# \ \  \  /  / | \  \/  / | \  \        
+#  \ \  \/  / / \ \    / / \ \  \       
+#   \ \    / /   /     \/   \ \  \____  
+#    \ \__/ /   /  /\   \    \ \_______\ 
+#     \|__|/   /__/ /\ __\    \|_______|
+#              |__|/ \|__|              
+                                      
+# EOF
+#   cat /etc/banner
+#   echo installing /etc/banner
+# }
+
+# install_bin() {
+#   if [ $0 != '/usr/bin/bell' ] ; then
+#     echo moving $0 to /usr/bin/bell
+#     mv $0 /usr/bin/bell
+#   fi
+# }
+
+# install() {
+#   install_banner
+#   install_boot
+#   install_button
+#   install_network
+#   install_bin
+#   echo done
+# }
+
+listen() {
+  bell off
+  mkfifo /tmp/srv-input
+  cat > /tmp/srv-input &
+  
+
+  while :
+  do
+    echo "listening..."
+    cat /tmp/srv-input | nc bel.vcxl.nl 8080 | while read line
+    do
+      echo "read line: $line"
+      if [ -f /root/learn ] ; then
+        echo $line >> /root/id
+        rm /root/learn
+        beep
+      fi
+
+      grep -q /root/id -e $line
+      if [ $? -eq 0 ] ; then
+        echo "found: $line"
+        on
+      fi
+
+      if [ "$line" = "off" ] ; then
+        off
+      fi
+    done
+    echo "connection closed"
+    sleep 1
+  done
+}
+
+
+if [ $# -eq 0 ] ; then
+  usage
+elif [ $1 = "on" ] ; then
+  on
+elif [ $1 = "off" ] ; then
+  off
+elif [ $1 = "id" ] ; then
+  id
+elif [ $1 = "reset" ] ; then
+  reset
+elif [ $1 = "learn" ] ; then
+  learn
+elif [ $1 = "listen" ] ; then
+  listen
+elif [ $1 = "log" ] ; then
+  log
+elif [ $1 = "kill" ] ; then
+  kill
+else
+  usage
+fi  
+
