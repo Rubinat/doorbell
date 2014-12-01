@@ -1,8 +1,0 @@
-#!/bin/sh /etc/rc.common
-START=99
-start() {
-  bell off
-  sleep 10
-  ln /usr/lib/libpcap.so /usr/lib/libpcap.so.1.0
-  bell listen > /tmp/bell.log &
-}

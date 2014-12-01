@@ -1,0 +1,12 @@
+#!/bin/sh /etc/rc.common
+START=99
+start() {
+  echo /etc/init.d/bellinit starting... >> /tmp/bell.log 
+  killall bell
+  killall ncat
+  bell off
+  # sleep 10
+  ln /usr/lib/libpcap.so /usr/lib/libpcap.so.1.0
+  bell listen >> /tmp/bell.log &
+  echo /etc/init.d/bellinit finished... >> /tmp/bell.log 
+}

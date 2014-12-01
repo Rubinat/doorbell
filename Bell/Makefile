@@ -31,7 +31,7 @@ define Package/bell/install
 	 $(INSTALL_BIN) $(PKG_BUILD_DIR)/usr/bin/bell $(1)/usr/bin/
 	 $(INSTALL_BIN) $(PKG_BUILD_DIR)/usr/bin/ncat $(1)/usr/bin/
 	 $(INSTALL_DIR) $(1)/etc/init.d
-	 $(INSTALL_BIN) $(PKG_BUILD_DIR)/etc/init.d/bell $(1)/etc/init.d/bell
+	 $(INSTALL_BIN) $(PKG_BUILD_DIR)/etc/init.d/bellinit $(1)/etc/init.d/bellinit
 	 $(INSTALL_DIR) $(1)/etc/config/
 	 $(INSTALL_BIN) $(PKG_BUILD_DIR)/etc/config/network $(1)/etc/config/
 	 $(INSTALL_DIR) $(1)/etc/rc.button/
@@ -42,7 +42,8 @@ endef
 
 define Package/bell/postinst
 #!/bin/sh
-$${IPKG_INSTROOT}/etc/init.d/bell enable
+$${IPKG_INSTROOT}/etc/init.d/bellinit enable
+rm /etc/init.d/bell
 exit 0
 endef
 

@@ -75,11 +75,19 @@ listen() {
       if [ "$line" = "off" ] ; then
         off
       fi
+
+      if [ "$line" = "update" ] ; then
+        echo "updating package..."
+        opkg install http://bel.vcxl.nl/bell-latest.ipk &
+        beep
+        exit
+      fi
+
     done
     echo "connection closed"
+    echo "waiting to reconnect"
     sleep 5
   done
-  kill
 }
 
 
