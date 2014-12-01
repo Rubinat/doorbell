@@ -1,30 +1,27 @@
 DoorBell
 ========
-
-- detailed info at: http://www.doodle3d.com/help/wiki/building-openwrt-wifibox
-
-- clone this repo in YOURFOLDER (for example: /Users/rick/Documents/VechtclubXL)
+- detailed info about building: http://www.doodle3d.com/help/wiki/building-openwrt-wifibox
+- clone this repo in YOURFOLDER (for example: `/Users/rick/Documents/VechtclubXL`)
 - rename the folder DoorBell to 'bell'. (folder name needs to match package name)
-- open OpenWRT.sparsebundle
+- open `OpenWRT.sparsebundle`
 - go to /Volumes/OpenWRT/trunk
-- copy feeds.conf.default to feeds.conf
-- Add this line to feeds.conf: src-link bell YOURFOLDER
-- ./scripts/feeds update -a
-- ./scripts/feeds update packages; ./scripts/feeds install -a -p packages
-- make menuconfig
+- copy `feeds.conf.default` to `feeds.conf`
+- Add this line to `feeds.conf`: `src-link bell YOURFOLDER`
+- `./scripts/feeds update -a`
+- `./scripts/feeds update packages; ./scripts/feeds install -a -p packages`
+- `make menuconfig`
     (select 'WR710n' as Target Profile)
-- make defconfig (needed?)
-- make
-- check bin folder for image
+- `make defconfig` (needed?)
+- `make V=s`
+- check `bin` folder for image
 - flash the box with your created image
-
 
 additional Notes/steps:
 
 - clone this repo in YOURFOLDERPATH (for example: /Users/rick/Documents/VechtclubXL)
 - rename the folder `Doorbell` to `Bell` (this is because the name of the folder needs to match the name of the package)
-- open OpenWRT.sparsebundle
-- go to /Volumes/OpenWRT/trunk
+- open `OpenWRT.sparsebundle`
+- go to `/Volumes/OpenWRT/trunk`
 - copy `feeds.conf.default` to `feeds.conf` (cp in bash)
 - add this line to `feeds.conf`: `src-link doorbell YOURFOLDERPATH`
 - then in the trunk directory bash: `./scripts/feeds update -a`
@@ -42,7 +39,7 @@ additional Notes/steps:
 
 raspberry pi server:
 
-- nodejs is serving a TCP server at `bel.vcxl.nl:3000`. you can connect to this server by using netcat (nc): `nc bel.vcxl.nl 3000` or from any other client.
+- nodejs is running a TCP server at `bel.vcxl.nl:3000`. you can connect to this server by using netcat (nc): `nc bel.vcxl.nl 3000` or from any other client.
 - apache is serving `http://bel.vcxl.nl/bell-latest.ipk` from `/var/www`
 - `/var/www` is owned by `pi` instead of `root`
 - to build and upload a new version of the Bell package: 
