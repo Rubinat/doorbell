@@ -1,104 +1,104 @@
 #!/bin/sh
 
 usage() {
-	echo "Usage: $0 { on | off | reset | id | listen | log | kill }"
+  echo "Usage: $0 { on | off | reset | id | listen | log | kill }"
 }
 
 on() {
-	echo 1 >/sys/class/gpio/gpio8/value
+  echo 1 >/sys/class/gpio/gpio8/value
 }
 
 off() {
-	echo 0 >/sys/class/gpio/gpio8/value
+  echo 0 >/sys/class/gpio/gpio8/value
 }
 
 log() {
-	cat /tmp/bell.log
+  cat /tmp/bell.log
 }
 
 beep() {
-	on
-	sleep 1
-	off
+  on
+  sleep 1
+  off
 }
 
 id() {
-	cat /root/id
+  cat /root/id
 }
 
 reset() {
-	echo reset id
-	rm /root/id
-	beep
+  echo reset id
+  rm /root/id
+  beep
 }
 
 kill() {
-	echo kill
-	killall -9 nc
-	killall -9 bell
+  echo kill
+  killall -9 nc
+  killall -9 bell
 }
 
 listen() {
-	bell off
-	mkfifo /tmp/srv-input
-	cat > /tmp/srv-input &
+  bell off
+#  mkfifo /tmp/srv-input
+#  cat > /tmp/srv-input &
 
-	if [ ! -f /root/learn ] && [ ! -f /root/id ] ; then
-	  touch /root/learn
-	  killall -9 nc
-	  beep
-	fi
-	
-	while :
-	do
-		echo "sending info..."
-		ifconfig br-lan | grep 'inet addr:' | cut -d: -f2 |  awk '{ print $1}' > /tmp/bellinfo
-		cat /root/id >> /tmp/bellinfo
-		sed -e 's/^/BELL: /' /tmp/bellinfo | nc bel.vcxl.nl 8080
-		
-		echo "listening..."
-		ncat --recv-only bel.vcxl.nl 8080 | while read line
-		do
-			echo "read line: $line"
-			if [ -f /root/learn ] ; then
-				echo $line >> /root/id
-				rm /root/learn
-				beep
-			fi
+  if [ ! -f /root/learn ] && [ ! -f /root/id ] ; then
+    touch /root/learn
+    killall -9 nc
+    beep
+  fi
 
-			grep -q /root/id -e $line
-			if [ $? -eq 0 ] ; then
-				echo "found: $line"
-				on
-			fi
+  while :
+  do
+    #echo "sending info..."
+    #ifconfig br-lan | grep 'inet addr:' | cut -d: -f2 |  awk '{ print $1}' > /tmp/bellinfo
+    #cat /root/id >> /tmp/bellinfo
+    #sed -e 's/^/BELL: /' /tmp/bellinfo | nc bel.vcxl.nl 8080
 
-			if [ "$line" = "off" ] ; then
-				off
-			fi
-		done
-		echo "connection closed"
-		sleep 1
-	done
-	kill
+    echo "listening..."
+    ncat --idle-timeout 60 --recv-only bel.vcxl.nl 8080 | while read line
+    do
+      echo "read line: $line"
+      if [ -f /root/learn ] ; then
+        echo "$line" >> /root/id
+        rm /root/learn
+        beep
+      fi
+
+      grep -q /root/id -e "$line"
+      if [ $? -eq 0 ] ; then
+        echo "found: $line"
+        on
+      fi
+
+      if [ "$line" = "off" ] ; then
+        off
+      fi
+    done
+    echo "connection closed"
+    sleep 5
+  done
+  kill
 }
 
 
 if [ $# -eq 0 ] ; then
-	usage
+  usage
 elif [ $1 = "on" ] ; then
-	on
+  on
 elif [ $1 = "off" ] ; then
-	off
+  off
 elif [ $1 = "id" ] ; then
-	id
+  id
 elif [ $1 = "reset" ] ; then
-	reset
+  reset
 elif [ $1 = "listen" ] ; then
-	listen
+  listen
 elif [ $1 = "log" ] ; then
-	log
+  log
 elif [ $1 = "kill" ] ; then
-	kill
+  kill
 else
-	usage
+  usage
 fi
