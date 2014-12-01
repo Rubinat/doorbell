@@ -39,3 +39,14 @@ additional Notes/steps:
 - after this go to your trunk directory
 - navigate to `bin/ar71xx`
 - in here you can find binaries to flash a router with your new made image
+
+raspberry pi server:
+
+- nodejs is serving a socket.io server at http://bel.vcxl.nl:3000. you can connect to this server by using netcat (nc): nc bel.vcxl.nl 3000`
+- apache is serving http://bel.vcxl.nl/bell-latest.ipk from /var/www
+- /var/www is owned by pi instead of root
+- to build and upload a new version of the Bell package: 
+    `make package/Bell/install V=s && scp /Volumes/VechtclubXL/trunk/bin/ar71xx/packages/bell/bell_0.1.0-1_ar71xx.ipk pi@bel.vcxl.nl:/var/www/`
+- on the raspberry pi you write to the tmp file `/tmp/bellwrite`. The contents of this file is send to all connected clients whereafter the file is deleted.
+- to update all connected clients: `echo update > /tmp/bellwrite` or to turn on a bell for testing: `echo 3,1 > /tmp/bellwrite` or to turn it of again: `echo off > /tmp/bellwrite`
+
