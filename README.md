@@ -42,8 +42,8 @@ additional Notes/steps:
 
 raspberry pi server:
 
-- nodejs is serving a socket.io server at http://bel.vcxl.nl:3000. you can connect to this server by using netcat (nc): nc bel.vcxl.nl 3000`
-- apache is serving http://bel.vcxl.nl/bell-latest.ipk from /var/www
+- nodejs is serving a TCP server at `bel.vcxl.nl:3000`. you can connect to this server by using netcat (nc): `nc bel.vcxl.nl 3000` or from any other client.
+- apache is serving `http://bel.vcxl.nl/bell-latest.ipk` from `/var/www`
 - /var/www is owned by pi instead of root
 - to build and upload a new version of the Bell package: 
     `make package/Bell/install V=s && scp /Volumes/VechtclubXL/trunk/bin/ar71xx/packages/bell/bell_0.1.0-1_ar71xx.ipk pi@bel.vcxl.nl:/var/www/`
