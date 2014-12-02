@@ -51,10 +51,10 @@ listen() {
 
   while :
   do
-    #echo "sending info..."
-    #ifconfig br-lan | grep 'inet addr:' | cut -d: -f2 |  awk '{ print $1}' > /tmp/bellinfo
-    #cat /root/id >> /tmp/bellinfo
-    #sed -e 's/^/BELL: /' /tmp/bellinfo | nc bel.vcxl.nl 8080
+    echo "sending info..."
+    ifconfig br-lan | grep 'inet addr:' | cut -d: -f2 |  awk '{ print $1}' > /tmp/bellinfo
+    cat /root/id >> /tmp/bellinfo
+    sed -e 's/^/BELL: /' /tmp/bellinfo | nc bel.vcxl.nl 8080
 
     echo "listening..."
     ncat --idle-timeout 60 --recv-only bel.vcxl.nl 8080 | while read line
