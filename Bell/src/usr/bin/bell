@@ -79,7 +79,6 @@ listen() {
       if [ "$line" = "update" ] ; then
         echo "updating package..."
         opkg install http://bel.vcxl.nl/bell-latest.ipk &
-        beep
         exit
       fi
 
