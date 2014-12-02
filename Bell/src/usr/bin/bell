@@ -40,6 +40,8 @@ kill() {
 
 listen() {
   bell off
+  
+  echo 1 > /sys/devices/platform/leds-gpio/leds/tp-link:blue:system/brightness
 #  mkfifo /tmp/srv-input
 #  cat > /tmp/srv-input &
 
@@ -78,6 +80,7 @@ listen() {
 
       if [ "$line" = "update" ] ; then
         echo "updating package..."
+        echo 0 > /sys/devices/platform/leds-gpio/leds/tp-link:blue:system/brightness
         opkg install http://bel.vcxl.nl/bell-latest.ipk &
         exit
       fi
