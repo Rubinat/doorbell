@@ -47,3 +47,6 @@ raspberry pi server:
 - on the raspberry pi you can write to a tmp file `/tmp/bellwrite`. The contents of this file is send to all connected clients whereafter the file is deleted.
 - to update all connected clients: `echo update > /tmp/bellwrite` or to turn on a bell for testing: `echo 3,1 > /tmp/bellwrite` or to turn it of again: `echo off > /tmp/bellwrite`
 
+updating package through ssh:
+
+- `ssh root@10.0.0.169 "opkg install http://bel.vcxl.nl/bell-latest.ipk"`   
